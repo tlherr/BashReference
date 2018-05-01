@@ -1,0 +1,33 @@
+#!/bin/env bash
+#
+# Gets the current date and time according to the system and prints it
+# Prints All Logged In Users
+# Prints System Uptime
+# Must run as root
+# Fedora run as follows: ./script | systemd-cat -t script
+# Version 1
+
+
+timezone=$(timedatectl --no-ask-password --no-pager | grep "Time zone" | sed -e 's/^[ \t]*//')
+echo "$timezone"
+
+current_date=$(date +"%A, %B %d %Y %t %I:%M %p %n")
+echo "$current_date"
+
+
+if ! [ $(id -u) = 0 ]; then
+   echo "Not root, unable to show all users"
+   echo "Exiting..."
+   exit 1
+fi
+
+logged_in=$(who | cut -d' ' -f1 | sort | uniq)
+echo "The Following Users are Logged In Currently: "
+echo $logged_in
+
+echo "System Uptime $(uptime --pretty). Up since $(uptime --since)"
+
+
+exit #  The right and proper method of "exiting" from a script.
+     #  A bare "exit" (no parameter) returns the exit status
+     #+ of the preceding command.
